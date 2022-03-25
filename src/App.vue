@@ -1,22 +1,22 @@
 <template>
   <div id="app">
-    <a href="https://github.com/drawcall/threejs-mesh-modifiers" target="_blank">
+    <!-- <a href="https://github.com/drawcall/threejs-mesh-modifiers" target="_blank">
       <img class="logo" src="./assets/logo.png">
-    </a>
-    <Btns/>
+    </a> -->
+    <!-- <Btns/> -->
     <World/>
   </div>
 </template>
 
 <script>
 import xEmiiter from "xemitterjs";
-import Btns from "./components/Btns";
+// import Btns from "./components/Btns";
 import World from "./components/World";
 
 export default {
   name: "App",
   components: {
-    Btns,
+    // Btns,
     World
   },
   methods: {

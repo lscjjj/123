@@ -4,6 +4,8 @@
 
 <script>
 import * as THREE from "three";
+// import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import RAFManager from "raf-manager";
 import Rocks from "./Rocks";
 import Album from "./Album";
@@ -20,6 +22,8 @@ export default {
     this.addAlbum();
     this.addMouseAndEffect();
 
+    this.addModels();
+
     this.render = this.render.bind(this);
     RAFManager.add(this.render);
   },
@@ -28,7 +32,7 @@ export default {
   },
 
   methods: {
-    initThree: function() {
+    initThree: function () {
       const container = this.$refs.container;
       const camera = new THREE.PerspectiveCamera(
         45,
@@ -36,7 +40,9 @@ export default {
         1,
         3000
       );
-      camera.position.z = 500;
+       
+      camera.position.set(0, 0, 500);
+
 
       const scene = new THREE.Scene();
       const renderer = new THREE.WebGLRenderer({ alpha: true });
@@ -52,7 +58,7 @@ export default {
       this.renderer = renderer;
     },
 
-    addLight: function() {
+    addLight: function () {
       const { scene } = this;
 
       const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444);
@@ -64,27 +70,49 @@ export default {
       scene.add(dirLight);
     },
 
-    addBackRocks: function() {
+    addBackRocks: function () {
       const { scene } = this;
       const rocks = new Rocks();
       rocks.addToScene(scene);
       this.rocks = rocks;
     },
 
-    addAlbum: function() {
+    addModels: function () {
+      let { scene } = this;
+      //导入obj模型
+        var objLoader = new OBJLoader();
+        objLoader.load('../models/Plane.obj', function (object) {
+            console.log(object)
+            //设置模型缩放比例
+            object.scale.set(1, 1, 1);
+            //设置模型的坐标
+            object.position.set(0, 0, 501);
+
+            object.traverse(function(child) {
+                if (child instanceof THREE.Mesh) {
+                    //设置模型皮肤
+                    child.material.map = THREE.ImageUtils.loadTexture( '../models/Jet_BaseColor.png');
+                }
+            });
+            //将模型添加到场景中
+            scene.add(object);
+        });
+    },
+
+    addAlbum: function () {
       const { scene, camera, renderer } = this;
       const album = new Album({ camera, renderer });
       album.addToScene(scene);
       this.album = album;
     },
 
-    addMouseAndEffect: function() {
+    addMouseAndEffect: function () {
       const { scene, renderer, camera, album } = this;
       const follow = new FollowEffect({
         texture,
         renderer,
         camera,
-        scene
+        scene,
       });
 
       new Mouse({ display: album.display, camera, renderer });
@@ -92,14 +120,26 @@ export default {
       this.follow = follow;
     },
 
-    render: function() {
+    render: function () {
       const { renderer, scene, camera, rocks, clock, follow } = this;
-
+      // var controls = new OrbitControls(camera, renderer.domElement);
+      // // 使动画循环使用时阻尼或自转 意思是否有惯性
+      // controls.enableDamping = true;
+      // //是否可以缩放
+      // controls.enableZoom = true;
+      // //是否自动旋转
+      // controls.autoRotate = true;
+      // //设置相机距离原点的最远距离
+      // controls.minDistance = 200;
+      // //设置相机距离原点的最远距离
+      // controls.maxDistance = 600;
+      // //是否开启右键拖拽
+      // controls.enablePan = true;
       follow.render();
       rocks.render(clock);
       renderer.render(scene, camera);
-    }
-  }
+    },
+  },
 };
 </script>
 
