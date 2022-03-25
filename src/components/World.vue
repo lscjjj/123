@@ -6,6 +6,7 @@
 import * as THREE from "three";
 // import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
+import { TrackballControls } from "three/examples/jsm/controls/TrackballControls";
 import RAFManager from "raf-manager";
 import Rocks from "./Rocks";
 import Album from "./Album";
@@ -40,9 +41,8 @@ export default {
         1,
         3000
       );
-       
-      camera.position.set(0, 0, 500);
 
+      camera.position.set(0, 0, 500);
 
       const scene = new THREE.Scene();
       const renderer = new THREE.WebGLRenderer({ alpha: true });
@@ -80,23 +80,25 @@ export default {
     addModels: function () {
       let { scene } = this;
       //导入obj模型
-        var objLoader = new OBJLoader();
-        objLoader.load('../models/Plane.obj', function (object) {
-            console.log(object)
-            //设置模型缩放比例
-            object.scale.set(1, 1, 1);
-            //设置模型的坐标
-            object.position.set(0, 0, 501);
+      var objLoader = new OBJLoader();
+      objLoader.load("../models/Plane.obj", function (object) {
+        console.log(object);
+        //设置模型缩放比例
+        object.scale.set(10, 10, 10);
+        //设置模型的坐标
+        object.position.set(0, 0, 0);
 
-            object.traverse(function(child) {
-                if (child instanceof THREE.Mesh) {
-                    //设置模型皮肤
-                    child.material.map = THREE.ImageUtils.loadTexture( '../models/Jet_BaseColor.png');
-                }
-            });
-            //将模型添加到场景中
-            scene.add(object);
+        object.traverse(function (child) {
+          if (child instanceof THREE.Mesh) {
+            //设置模型皮肤
+            child.material.map = THREE.ImageUtils.loadTexture(
+              "../models/Jet_BaseColor.png"
+            );
+          }
         });
+        //将模型添加到场景中
+        scene.add(object);
+      });
     },
 
     addAlbum: function () {
@@ -122,19 +124,14 @@ export default {
 
     render: function () {
       const { renderer, scene, camera, rocks, clock, follow } = this;
-      // var controls = new OrbitControls(camera, renderer.domElement);
+      var controls = new TrackballControls(camera, renderer.domElement);
       // // 使动画循环使用时阻尼或自转 意思是否有惯性
-      // controls.enableDamping = true;
-      // //是否可以缩放
-      // controls.enableZoom = true;
-      // //是否自动旋转
-      // controls.autoRotate = true;
-      // //设置相机距离原点的最远距离
-      // controls.minDistance = 200;
-      // //设置相机距离原点的最远距离
-      // controls.maxDistance = 600;
-      // //是否开启右键拖拽
-      // controls.enablePan = true;
+      controls.rotateSpeed = 0.1; // 旋转速度
+      controls.zoomSpeed = 0.1; // 缩放速度
+      controls.minDistance = 200; //缩放的最近距离
+      controls.maxDistance = 800; //缩放的最远距离
+      controls.panSpeed = 0.1; // 平controls
+      controls.update();
       follow.render();
       rocks.render(clock);
       renderer.render(scene, camera);
