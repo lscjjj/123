@@ -35,7 +35,7 @@ export default class Album {
 
       photo.display.position.x = -w + (i % (len / 2)) * w;
       photo.display.position.y = h / 2 - ppo.floor(i / (len / 2), 0) * h;
-      photo.display.position.z = pos - 200;
+      photo.display.position.z = pos - 300;
       photo.display.from = photo.display.position.clone();
       photo.display.to = new THREE.Vector3(0, 0, pos);
       photo.display.fromScale = scale;

@@ -7,12 +7,16 @@ import * as THREE from "three";
 // import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import { TrackballControls } from "three/examples/jsm/controls/TrackballControls";
+
 import RAFManager from "raf-manager";
 import Rocks from "./Rocks";
 import Album from "./Album";
 import Mouse from "./Mouse";
 import FollowEffect from "./FollowEffect";
 import texture from "../assets/dot.png";
+
+// import Plane from "../assets/Plane.obj";
+// import Planeimg from "../assets/Jet_BaseColor.png";
 
 export default {
   name: "World",
@@ -22,9 +26,7 @@ export default {
     this.addBackRocks();
     this.addAlbum();
     this.addMouseAndEffect();
-
     this.addModels();
-
     this.render = this.render.bind(this);
     RAFManager.add(this.render);
   },
@@ -39,7 +41,7 @@ export default {
         45,
         container.offsetWidth / container.offsetHeight,
         1,
-        3000
+        10000
       );
 
       camera.position.set(0, 0, 500);
@@ -52,6 +54,27 @@ export default {
       renderer.setClearColor(0x000000, 0);
       const clock = new THREE.Clock();
 
+      var geometry = new THREE.SphereBufferGeometry(10000, 60, 1200);
+      // invert the geometry on the x-axis so that all of the faces point inward
+      geometry.scale(-1, -1, -1);
+      //加载全景图片资源
+      var texture = new THREE.TextureLoader().load("../assets/360_world.jpg");
+      texture.minFilter = THREE.LinearFilter;
+      texture.format = THREE.RGBFormat;
+      var material = new THREE.MeshBasicMaterial();
+      material.map = texture;
+      var meshB = new THREE.Mesh(geometry, material);
+      scene.add(meshB);
+
+      const controls = new TrackballControls(camera, renderer.domElement); //
+      // // 使动画循环使用时阻尼或自转 意思是否有惯性
+      controls.rotateSpeed = 0.1; // 旋转速度
+      controls.zoomSpeed = 0.1; // 缩放速度
+      controls.minDistance = 200; //缩放的最近距离
+      controls.maxDistance = 10000; //缩放的最远距离
+      controls.panSpeed = 0.1; // 平controls
+
+      this.controls = controls;
       this.clock = clock;
       this.scene = scene;
       this.camera = camera;
@@ -81,18 +104,19 @@ export default {
       let { scene } = this;
       //导入obj模型
       var objLoader = new OBJLoader();
-      objLoader.load("../models/Plane.obj", function (object) {
+      objLoader.load("../models/Satellite.obj", function (object) {
         console.log(object);
         //设置模型缩放比例
-        object.scale.set(10, 10, 10);
+        object.scale.set(25, 25, 25);
         //设置模型的坐标
-        object.position.set(0, 0, 0);
+        object.position.set(0, 400, -1000);
+        object.rotation.set(0, -Math.PI * 0.6, 0);
 
         object.traverse(function (child) {
           if (child instanceof THREE.Mesh) {
             //设置模型皮肤
             child.material.map = THREE.ImageUtils.loadTexture(
-              "../models/Jet_BaseColor.png"
+              "../models/satellite_Satélite_Metallic.jpg"
             );
           }
         });
@@ -123,14 +147,8 @@ export default {
     },
 
     render: function () {
-      const { renderer, scene, camera, rocks, clock, follow } = this;
-      var controls = new TrackballControls(camera, renderer.domElement);
-      // // 使动画循环使用时阻尼或自转 意思是否有惯性
-      controls.rotateSpeed = 0.1; // 旋转速度
-      controls.zoomSpeed = 0.1; // 缩放速度
-      controls.minDistance = 200; //缩放的最近距离
-      controls.maxDistance = 800; //缩放的最远距离
-      controls.panSpeed = 0.1; // 平controls
+      const { renderer, camera, scene, rocks, clock, follow, controls } = this; //
+
       controls.update();
       follow.render();
       rocks.render(clock);

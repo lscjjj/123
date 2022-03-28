@@ -1,10 +1,14 @@
 <template>
   <div id="app">
+    <div class="logo">
+      <img src="./assets/logo.png" />
+      <span>深圳市民治中学</span>
+    </div>
     <!-- <a href="https://github.com/drawcall/threejs-mesh-modifiers" target="_blank">
       <img class="logo" src="./assets/logo.png">
     </a> -->
     <!-- <Btns/> -->
-    <World/>
+    <World />
   </div>
 </template>
 
@@ -17,34 +21,45 @@ export default {
   name: "App",
   components: {
     // Btns,
-    World
+    World,
   },
   methods: {
-    click: function(type) {
+    click: function (type) {
       xEmiiter.emit("MENU_CLICK", type);
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style>
-#app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+body {
+  background-color: #ffffff;
+  margin: 0;
+  overflow: hidden;
+}
+
+* {
   margin: 0;
   padding: 0;
-  width: 100%;
-  height: 100%;
+  user-select: none;
 }
+
 .logo {
-  width: 60px;
   position: absolute;
   z-index: 999;
-  left: 30px;
-  top: 30px;
-  opacity: 0.7;
+  display: flex;
+  align-items: center;
+  top: 1rem;
+  left: 1rem;
+}
+
+.logo span {
+  color: #fff;
+  margin: 0 0.5rem;
+  font-size: 1rem;
+}
+
+.logo img {
+  width: 2.5rem;
 }
 </style>

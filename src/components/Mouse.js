@@ -20,7 +20,7 @@ export default class Mouse {
 
   addMouseEvent() {
     this.onClick = this.onClick.bind(this);
-    document.addEventListener("click", this.onClick, false);
+    document.addEventListener("touchend", this.onClick, true);
   }
 
   onClick(e) {
@@ -31,8 +31,8 @@ export default class Mouse {
 
     const ratio = renderer.getPixelRatio();
     const rect = canvas.getBoundingClientRect();
-    let x = e.clientX - rect.left;
-    let y = e.clientY - rect.top;
+    let x = e.changedTouches[0].clientX - rect.left;
+    let y = e.changedTouches[0].clientY - rect.top;
     x *= ratio;
     y *= ratio;
 
@@ -55,6 +55,6 @@ export default class Mouse {
   }
 
   destroy() {
-    document.removeEventListener("click", this.onClick, false);
+    document.removeEventListener("touchend", this.onClick, true);
   }
 }

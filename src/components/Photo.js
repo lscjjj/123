@@ -18,8 +18,8 @@ export default class Photo {
   }
 
   init(texture) {
-    this.width = 1003 / 1;
-    this.height = 564 / 1;
+    this.width = 1003 / 1.5;
+    this.height = 564 / 1.5;
 
     const map = new THREE.TextureLoader().load(texture);
     const display = new THREE.Mesh(
