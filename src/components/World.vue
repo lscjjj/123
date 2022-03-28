@@ -29,12 +29,14 @@ export default {
     this.addModels();
     this.render = this.render.bind(this);
     RAFManager.add(this.render);
+      
   },
   destroyed() {
     RAFManager.remove(this.render);
   },
 
   methods: {
+
     initThree: function () {
       const container = this.$refs.container;
       const camera = new THREE.PerspectiveCamera(
@@ -54,11 +56,13 @@ export default {
       renderer.setClearColor(0x000000, 0);
       const clock = new THREE.Clock();
 
-      var geometry = new THREE.SphereBufferGeometry(10000, 60, 1200);
+      var geometry = new THREE.SphereBufferGeometry(5000, 60, 600);
       // invert the geometry on the x-axis so that all of the faces point inward
       geometry.scale(-1, -1, -1);
+      geometry.rotateX(60)
+      geometry.rotateY(10)
       //加载全景图片资源
-      var texture = new THREE.TextureLoader().load("../assets/360_world.jpg");
+      var texture = new THREE.TextureLoader().load("../models/360_world.jpg");
       texture.minFilter = THREE.LinearFilter;
       texture.format = THREE.RGBFormat;
       var material = new THREE.MeshBasicMaterial();
@@ -71,7 +75,7 @@ export default {
       controls.rotateSpeed = 0.1; // 旋转速度
       controls.zoomSpeed = 0.1; // 缩放速度
       controls.minDistance = 200; //缩放的最近距离
-      controls.maxDistance = 10000; //缩放的最远距离
+      controls.maxDistance = 5000; //缩放的最远距离
       controls.panSpeed = 0.1; // 平controls
 
       this.controls = controls;
@@ -107,10 +111,10 @@ export default {
       objLoader.load("../models/Satellite.obj", function (object) {
         console.log(object);
         //设置模型缩放比例
-        object.scale.set(25, 25, 25);
+        object.scale.set(30, 30, 30);
         //设置模型的坐标
-        object.position.set(0, 400, -1000);
-        object.rotation.set(0, -Math.PI * 0.6, 0);
+        object.position.set(0, 300, -1000);
+        object.rotation.set(0, -Math.PI * 0.1, 0);
 
         object.traverse(function (child) {
           if (child instanceof THREE.Mesh) {
@@ -148,7 +152,7 @@ export default {
 
     render: function () {
       const { renderer, camera, scene, rocks, clock, follow, controls } = this; //
-
+     
       controls.update();
       follow.render();
       rocks.render(clock);
