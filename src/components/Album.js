@@ -4,14 +4,14 @@ import Photo from "./Photo";
 import xEmiiter from "xemitterjs";
 import THREEUtils from "../utils/THREEUtils";
 
-import img01 from "../assets/01.jpg";
-import img02 from "../assets/02.jpg";
-import img03 from "../assets/03.jpg";
-import img04 from "../assets/04.jpg";
-import img05 from "../assets/05.jpg";
-import img06 from "../assets/06.jpg";
+// import img01 from "../assets/01.jpg";
+// import img02 from "../assets/02.jpg";
+// import img03 from "../assets/03.jpg";
+// import img04 from "../assets/04.jpg";
+// import img05 from "../assets/05.jpg";
+// import img06 from "../assets/06.jpg";
 
-const IMGS = [img01, img02, img03, img04, img05, img06];
+// const IMGS = [img01, img02, img03, img04, img05, img06];
 
 export default class Album {
   constructor(conf) {
@@ -19,15 +19,17 @@ export default class Album {
     this.addListener();
   }
 
-  init({ camera, renderer }) {
+  init({ camera, renderer,array }) {
+    console.log(array); 
     const display = new THREE.Group();
     const scale = 0.25;
     const len = 6;
     const list = [];
 
-    for (let i = 0; i < len; i++) {
+    for (let i = 0; i < array.length; i++) {
       // eslint-disable-next-line
-      const photo = new Photo(IMGS[i]);
+      // const photo = new Photo(IMGS[i]);
+      const photo = new Photo(array[i]);
       const pos = THREEUtils.getRealSizePos({ camera, renderer });
       const d = 18;
       const w = photo.width * scale + d;

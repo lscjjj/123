@@ -8,20 +8,21 @@
       <img class="logo" src="./assets/logo.png">
     </a> -->
     <!-- <Btns/> -->
-    <World />
+    <router-view></router-view>
+    <!-- <World /> -->
   </div>
 </template>
 
 <script>
 import xEmiiter from "xemitterjs";
 // import Btns from "./components/Btns";
-import World from "./components/World";
+// import World from "./components/World";
 
 export default {
   name: "App",
   components: {
     // Btns,
-    World,
+    // World,
   },
   methods: {
     click: function (type) {

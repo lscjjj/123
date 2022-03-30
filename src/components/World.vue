@@ -7,6 +7,7 @@ import * as THREE from "three";
 // import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import { TrackballControls } from "three/examples/jsm/controls/TrackballControls";
+import { DeviceOrientationControls } from "three/examples/jsm/controls/DeviceOrientationControls";
 
 import RAFManager from "raf-manager";
 import Rocks from "./Rocks";
@@ -20,23 +21,83 @@ import texture from "../assets/dot.png";
 
 export default {
   name: "World",
+  retrun: {
+    dcontrols: null,
+    id: null,
+  },
   mounted() {
-    this.initThree();
-    this.addLight();
-    this.addBackRocks();
-    this.addAlbum();
-    this.addMouseAndEffect();
-    this.addModels();
-    this.render = this.render.bind(this);
-    RAFManager.add(this.render);
-      
+    this.id = this.$route.query.id;
+    console.log(this.$route.query.id);
+    this.getWork();
   },
   destroyed() {
     RAFManager.remove(this.render);
   },
 
   methods: {
-
+    getWork: function () {
+      var api = "http://localhost:7004/edu/";
+      let params = {
+        id: this.id,
+      };
+      this.ajax
+        .get(api + "selectWorkById", params)
+        .then((res) => {
+          // console.log(res);
+          var pA =JSON.parse(res.data[0][0].file).photo.split(",")
+          console.log(pA);
+          this.initThree();
+          this.addLight();
+          this.addBackRocks();
+          this.addAlbum(pA);
+          this.addMouseAndEffect();
+          this.addModels();
+          this.pan();
+          this.render = this.render.bind(this);
+          RAFManager.add(this.render);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    },
+    pan: function () {
+      const { camera } = this;
+      var _this = this;
+      var u = navigator.userAgent;
+      var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+      var isAndroid = u.indexOf("Android") > -1 || u.indexOf("Adr") > -1; //android终端
+      if (isiOS) {
+        _this.$refs.container.addEventListener(
+          "touchend",
+          function () {
+            window.DeviceOrientationEvent.requestPermission().then((state) => {
+              if (state === "granted") {
+                //允许
+                // _this.render();
+                // window.location.reload()
+                _this.dcontrols = new DeviceOrientationControls(camera);
+                return;
+              } else if (state === "denied") {
+                //拒绝
+                return;
+              } else if (state === "prompt") {
+                return;
+              }
+            });
+          },
+          true
+        );
+      } else if (isAndroid) {
+        // window.addEventListener(
+        //   "deviceorientation",
+        //   function (e) {
+        //     console.log(e.alpha);
+        //      camera.position.x = e.alpha
+        //   },
+        //   false
+        // );
+      }
+    },
     initThree: function () {
       const container = this.$refs.container;
       const camera = new THREE.PerspectiveCamera(
@@ -59,8 +120,8 @@ export default {
       var geometry = new THREE.SphereBufferGeometry(5000, 60, 600);
       // invert the geometry on the x-axis so that all of the faces point inward
       geometry.scale(-1, -1, -1);
-      geometry.rotateX(60)
-      geometry.rotateY(10)
+      geometry.rotateX(60);
+      geometry.rotateY(10);
       //加载全景图片资源
       var texture = new THREE.TextureLoader().load("../models/360_world.jpg");
       texture.minFilter = THREE.LinearFilter;
@@ -71,14 +132,17 @@ export default {
       scene.add(meshB);
 
       const controls = new TrackballControls(camera, renderer.domElement); //
+      const dcontrols = new DeviceOrientationControls(camera);
+
       // // 使动画循环使用时阻尼或自转 意思是否有惯性
       controls.rotateSpeed = 0.1; // 旋转速度
       controls.zoomSpeed = 0.1; // 缩放速度
-      controls.minDistance = 200; //缩放的最近距离
+      // controls.minDistance = 200; //缩放的最近距离
       controls.maxDistance = 5000; //缩放的最远距离
       controls.panSpeed = 0.1; // 平controls
 
       this.controls = controls;
+      this.dcontrols = dcontrols;
       this.clock = clock;
       this.scene = scene;
       this.camera = camera;
@@ -129,9 +193,9 @@ export default {
       });
     },
 
-    addAlbum: function () {
+    addAlbum: function (array) {
       const { scene, camera, renderer } = this;
-      const album = new Album({ camera, renderer });
+      const album = new Album({ camera, renderer,array });
       album.addToScene(scene);
       this.album = album;
     },
@@ -151,9 +215,19 @@ export default {
     },
 
     render: function () {
-      const { renderer, camera, scene, rocks, clock, follow, controls } = this; //
-     
+      const {
+        renderer,
+        camera,
+        scene,
+        rocks,
+        clock,
+        follow,
+        controls,
+        dcontrols,
+      } = this; //
+
       controls.update();
+      dcontrols.update();
       follow.render();
       rocks.render(clock);
       renderer.render(scene, camera);

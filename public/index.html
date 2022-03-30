@@ -31,7 +31,9 @@
 </body>
 
 </html>
-<script>        let htmlwidth = document.documentElement.clientWidth || document.body.clientWidth
+<script>
+
+  let htmlwidth = document.documentElement.clientWidth || document.body.clientWidth
   let htmlDom = document.getElementsByTagName('html')[0];
   if (htmlwidth > 750) { htmlwidth = 750 }
   htmlDom.style.fontSize = htmlwidth / 20 + 'px';
@@ -40,4 +42,27 @@
     let htmlDom = document.getElementsByTagName('html')[0];
     if (htmlwidth > 750) { htmlwidth = 750 }
     htmlDom.style.ZfontSize = htmlwidth / 20 + 'px';
-  };</script>
+  };
+
+  // window.onload = function () {
+  //   var u = navigator.userAgent;
+  //   var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+  //   var isAndroid = u.indexOf("Android") > -1 || u.indexOf("Adr") > -1; //android终端
+  //   if (isiOS) {
+  //     document.body.addEventListener("touchend", function () {
+  //       window.DeviceOrientationEvent.requestPermission().then((state) => {
+  //         if (state === "granted") {
+  //           alert(state)
+  //           //允许
+  //           return;
+  //         } else if (state === "denied") {
+  //           //拒绝
+  //           return;
+  //         } else if (state === "prompt") {
+  //           return;
+  //         }
+  //       });
+  //     }, true);
+  //   }
+  // }
+</script>
